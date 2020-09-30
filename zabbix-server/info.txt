@@ -1,0 +1,5 @@
+{TRIGGER.STATUS}^{HOST.IP}
+
+{TRIGGER.NAME}^1. {ITEM.NAME1} ({HOST.NAME1}:{ITEM.KEY1}): {ITEM.VALUE1}^2. {ITEM.NAME2} ({HOST.NAME2}:{ITEM.KEY2}): {ITEM.VALUE2}^3. {ITEM.NAME3} ({HOST.NAME3}:{ITEM.KEY3}): {ITEM.VALUE3}^Original event ID: {EVENT.ID}
+
+*/5 * * * * date >> /tmp/juhe.log ;/usr/lib/zabbix/alertscripts/juhe.py 2>&1 >> /tmp/juhe.log ; : >/tmp/juhe.txt

@@ -1,0 +1,26 @@
+version: "3.5"
+services:
+  zabbix-agent:
+    image: zabbix/zabbix-agent:centos-5.0-latest
+    privileged: true
+    user: root
+    restart: always
+    cap_add: 
+    - ALL
+    volumes:
+     - ./script:/etc/zabbix/script
+     - ./zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d
+     - /:/rootfs
+     - /var/run:/var/run
+     - /proc:/proc
+     - /etc/timezone:/etc/timezone
+    environment:
+      ZBX_METADATA: ${ZBX_METADATA}
+      ZBX_HOSTNAME: ${ZBX_HOSTNAME}
+      #ZBX_ACTIVESERVERS: ${ZBX_SERVER_HOST}
+      ZBX_SERVER_PORT: ${ZBX_SERVER_PORT}
+      ZBX_SERVER_HOST: ${ZBX_SERVER_HOST}
+      ZBX_LISTENPORT: 10050
+    ports:
+      - '10050:10050'
+    network_mode: "host"

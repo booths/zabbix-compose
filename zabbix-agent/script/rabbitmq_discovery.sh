@@ -1,7 +1,8 @@
 #!/bin/bash
 
-export PATH=/usr/local/bin:$PATH
-queues=`rabbitmqadmin   list queues |awk '$4 ~ /[0-9]+/ {print $2}'`
+PWD=`cd $(dirname $0);pwd`
+export PATH=$PWD:/usr/local/bin:$PATH
+queues=`curl -s -u guest:guest 'http://127.0.0.1:15672/api/queues'  |jq '.[]|.name'|sed 's/\"//g'`
 num=`echo $queues|wc -w`
 echo '{"data":['
 for q in  $queues

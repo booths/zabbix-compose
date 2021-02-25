@@ -8,9 +8,10 @@ import dingtalk
 from email.mime.text import MIMEText
 from email.header import Header
 
-dingtalk_url=["https://oapi.dingtalk.com/robot/send?access_token=71a49ee2ae87f65db805191fe114fb6d5b200b8099a2cbbd7f8e7bdcf331d43e"]
+dingtalk_url=sys.argv[1]
+#dingtalk_url=["https://oapi.dingtalk.com/robot/send?access_token="]
 #fx_dingtalk_url=["https://oapi.dingtalk.com/robot/send?access_token="]
-tmp_file="/tmp/juhe/juhe.txt"
+tmp_file="/juhe_tmp/juhe.txt"
 def juhe():
     file = open(tmp_file)
     alerts={}

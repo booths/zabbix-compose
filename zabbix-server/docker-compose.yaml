@@ -1,6 +1,9 @@
 version: "3.5"
+volumes:
+  juhe_tmp:
 services:
   mysql-server:
+    container_name: zabbix-mysql
     image: mysql:5.7
     command: --character-set-server=utf8  --interactive_timeout=120 --wait_timeout=120 --log_warnings=1  --collation-server=utf8_bin --sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION --lower_case_table_names=1
     restart: always 
@@ -17,7 +20,7 @@ services:
       - /etc/timezone:/etc/timezone
   zabbix-server:
     container_name: zabbix-server
-    image: zabbix/zabbix-server-mysql:centos-5.0-latest
+    image: zabbix/zabbix-server-mysql:centos-4.0-latest
     ulimits:
        nproc: 65535
        nofile:
@@ -49,10 +52,10 @@ services:
       - /etc/timezone:/etc/timezone
       - ./zabbix/alertscripts:/usr/lib/zabbix/alertscripts
       - ./zabbix/externalscripts:/usr/lib/zabbix/externalscripts
-      - ./zabbix/tmp:/juhe/tmp
+      - juhe_tmp:/juhe_tmp
   zabbix-web:
     container_name: zabbix-web
-    image: zabbix/zabbix-web-nginx-mysql:centos-5.0-latest
+    image: zabbix/zabbix-web-nginx-mysql:centos-4.0-latest
     environment:
       - DB_SERVER_HOST=mysql-server
       - MYSQL_USER=zabbix
@@ -73,9 +76,19 @@ services:
     depends_on:
       - mysql-server
       - zabbix-server
+  zabbix-notice:
+    container_name: zabbix-notice
+    image: python:2
+    restart: always
+    command: /zabbix-notice/cron.sh
+    volumes:
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+      - ./zabbix/alertscripts:/zabbix-notice
+      - juhe_tmp:/juhe_tmp
   zabbix-agent:
     container_name: zabbix-agent
-    image: zabbix/zabbix-agent:centos-5.0-latest
+    image: zabbix/zabbix-agent:centos-4.0-latest
     privileged: true
     user: root
     restart: always
@@ -86,15 +99,12 @@ services:
      - ../zabbix-agent/zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d
      - /:/rootfs
      - /var/run:/var/run
-     - /proc:/proc
+       #- /proc:/proc
      - /etc/timezone:/etc/timezone
     environment:
       ZBX_METADATA: "zabbix server"
-      ZBX_HOSTNAME: "Zabbix-server"
-      ZBX_SERVER_HOST: zabbix-server
-    ports:
-      - '10050:10050'
-    links:
-      - zabbix-server:zabbix-server
+      ZBX_HOSTNAME: "Zabbix server"
+      ZBX_SERVER_HOST: 127.0.0.1
+    network_mode: "service:zabbix-server"
     depends_on:
       - zabbix-server

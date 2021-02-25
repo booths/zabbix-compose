@@ -79,6 +79,8 @@ services:
   zabbix-notice:
     container_name: zabbix-notice
     image: python:2
+    environment:
+      - ding_talk_url=${ding_talk_url}
     restart: always
     command: /zabbix-notice/cron.sh
     volumes:

@@ -1,7 +1,7 @@
 version: "3.5"
 services:
   zabbix-agent:
-    image: zabbix/zabbix-agent:centos-5.0-latest
+    image: zabbix/zabbix-agent:centos-4.0-latest
     privileged: true
     user: root
     restart: always
